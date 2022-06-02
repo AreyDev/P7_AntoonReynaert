@@ -1,0 +1,37 @@
+#search-bar{
+    outline: none;
+    background-color: transparent;
+    height: 100%;
+    width: 100%;
+    border: none;
+    &::placeholder{
+        font-family: 'Lato', sans-serif;
+        font-size: 20px;
+    }
+}
+
+.tag-container{
+    display: flex;
+    margin-top: 20px;
+}
+
+.dropdown-container{
+    display: flex;
+    margin-top: 20px;
+}
+
+.cards-section{
+    width: 100%;
+    margin-top: 60px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    & .card-block{
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    & .no-result-message{
+        display: none;
+    }
+}

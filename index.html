@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <!-- Meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Titre & Logo -->
+        <title>Les petits plats - Home page</title>
+        <link rel="icon" type="image/icon" href="./images/favicon.ico">
+        <!--  CSS -->
+        <link rel="stylesheet" href="/css/style.css" />
+        <!-- Font awesome  -->
+        <link rel="stylesheet" href="/fontawesome/css/all.min.css" />
+        <!-- Latin Font -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+        <!-- Lato Font -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+        <!-- Roboto Font -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+                
+    </head>
+
+    <body>
+        <!-- Header -->
+        <header class="header">
+            <img src="./images/logo.png" alt="logo" width="50" height="46">
+            <h1>Les petits plats</h1>
+        </header>
+        <!-- Main -->
+        <main>
+            <!-- input main recherche -->
+            <section class="search-section">
+
+                <div class="search-bar-container">
+                    <div class="search-bar">
+                        <form>
+                            <input type="text" name="search" placeholder="Rechercher un ingrédient, appareil, ustensile ou une recette" id="search-bar"/>
+                        </form>
+                        <button type="submit"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+                <!-- tags  -->
+                <div class="tag-container"></div>
+                <!-- dropdown container  -->
+                <div class="dropdown-container"></div>
+            </section>
+            <!-- cards recepies  -->
+            <section class="cards-section"></section>
+        </main>
+        <!-- script  -->
+        <script type="module" src="/src/index.js"></script>
+
+    </body>
+
+</html>
