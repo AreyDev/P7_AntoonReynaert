@@ -10,42 +10,21 @@ export default class Search{
 
     setSearchTerms(userInput) {
         this.userInput = userInput;
-        this.results = this.searchRecipes(this.userInput, this.keywordList, recipes);
+        const searchResults = Search.searchRecipes(this.userInput, this.keywordList, recipes);
+        const sortedRecipeCounters = this.getSortedCounters(this.userInput, searchResults);
+        this.results = this.getRevelantRecipesFromSortedCounters(sortedRecipeCounters);
         this.triggerCallbacks();
     }
 
     setKeywordList(keywordList) {
         this.keywordList = keywordList;
-        this.results = this.searchRecipes(this.userInput, this.keywordList, recipes);
+        const searchResults = Search.searchRecipes(this.userInput, this.keywordList, recipes);
+        const sortedRecipeCounters = this.getSortedCounters(this.keywordList, searchResults);
+        this.results = this.getRevelantRecipesFromSortedCounters(sortedRecipeCounters);
         this.triggerCallbacks();
     }
 
-    includes(element, string) {
-        let isIncluded = false; 
-        for (let j = 0; j < element.length; j++) {
-
-            for(let k = 0; k < string.length; k++) {
-
-                const nextLetterElement = element[j+k];
-                const expectedLetter = string[k];
-
-                if (nextLetterElement !== expectedLetter) {
-                    isIncluded = false;
-                    break;
-                } else {
-                    isIncluded = true;
-                }
-            }
-
-            if (isIncluded) {
-                break;
-            }
-
-        }
-        return isIncluded;
-    }
-
-    searchRecipes(userInput, keywordList, recipes) {
+    static searchRecipes(userInput, keywordList, recipes) {
         const noResultMessage = document.querySelector('.no-result-message');
         let results = [];
         let hasUserInput = [];
@@ -53,60 +32,46 @@ export default class Search{
         let hasKeyword = [];
 
         if (userInput !== undefined && userInput.length > 2) {
+            recipes.forEach(recipe => {
 
-            // pour chaque recette, je crée un tableau avec le nom, les ingrédients et la description
-            for(let i = 0; i < recipes.length; i++) {
-                const recipeName = recipes[i].name;
-                const recipeIngredients = recipes[i].ingredients;
-                const recipeIngredientsArr = [];
-                const recipeDescription = recipes[i].description; 
-
-                // j'ajoute chaque ingrédient de la recette au tableau d'ingrédients
-                for (let j = 0; j < recipeIngredients.length; j++) {
-                    const ingredient = recipeIngredients[j].ingredient;
-                    recipeIngredientsArr.push(ingredient);
-                }
-
-                // je crée une chaîne de caractère contenant les détails de la recette
-                const recipeDetails = `${recipeName}, ${recipeIngredientsArr.toString()}, ${recipeDescription}`;
-
-                // si les détails de la recette contiennent les termes recherchés alors la recette est ajoutée au tableau des résultats
-                if (this.includes(recipeDetails, userInput)) {
-                    hasUserInput.push(recipes[i]);
+                if (recipe.name.toLowerCase().includes(userInput.toLowerCase()) || recipe.ingredients.includes(userInput.toLowerCase()) || recipe.description.toLowerCase().includes(userInput.toLowerCase())) {
+                    hasUserInput.push(recipe);
                     results = hasUserInput;
 
                     if (keywordList !== null) {
-                        for (let j = 0; j < keywordList.length; j++) {
-                            const keywordName = keywordList[j].keyword;
-                            const category = keywordList[j].category;
-
-                            for (let k = 0; k < hasUserInput.length; k++) {
+                        keywordList.forEach(keyword => {
+                            const keywordName = keyword.keyword;
+                            const category = keyword.category;
+                            
+                            hasUserInput.forEach(recipe => {
                                 if (category === 'ingredients') {
-                                    const recipeIngredients = hasUserInput[k].ingredients;
-                                    for (let l = 0; l < recipeIngredients.length; l++) {
-                                        const ingredientName = recipeIngredients[l].ingredient;
-                                        if (this.includes(ingredientName.toLowerCase(), keywordName.toLowerCase())) {
-                                            hasUserInputAndKeyword.push(hasUserInput[k]);
+                                    const recipeIngredients = recipe.ingredients;
+                                    recipeIngredients.forEach(ingredient => {
+                                        const ingredientName = ingredient.ingredient;
+                                        if (ingredientName.toLowerCase().includes(keywordName.toLowerCase())) {
+                                            hasUserInputAndKeyword.push(recipe);
                                         }
-                                    }
+                                    });
                                 } else if (category === 'appareils') {
-                                    if (this.includes(hasUserInput[k].appliance.toLowerCase(), keywordName.toLowerCase())) {
-                                        hasUserInputAndKeyword.push(hasUserInput[k]);
+                                    if (recipe.appliance.toLowerCase().includes(keywordName.toLowerCase())) {
+                                        hasUserInputAndKeyword.push(recipe);
                                     }
                                 } else if (category === 'ustensiles') {
-                                    const recipeUstensils = hasUserInput[k].ustensils;
-                                    for (let m = 0; m < recipeUstensils.length; m++) {
-                                        if(this.includes(recipeUstensils[m].toLowerCase(), keywordName.toLowerCase())) {
-                                            hasUserInputAndKeyword.push(hasUserInput[k]);
+                                    const recipeUstensils = recipe.ustensils;
+                                    recipeUstensils.forEach(ustensil => {
+                                        if(ustensil.toLowerCase().includes(keywordName.toLowerCase())) {
+                                            hasUserInputAndKeyword.push(recipe);
                                         }
-                                    }
-                                }        
-                            }
+                                    });
+                                }             
+                            });
                             results = hasUserInputAndKeyword;
-                        }
+                        });
                     }
+
                 }
-            }
+
+            });
         }
         
         if (keywordList !== null) {
@@ -174,5 +139,71 @@ export default class Search{
     // déclenchement des callbacks
     triggerCallbacks() {
         this.callbacks.forEach(cb => cb(this.results));
+    }
+
+    getSortedCounters(term, recipesFromSearch) {
+        let resultsToBeSorted = [];
+
+        recipesFromSearch.forEach(recipe => {
+
+            let counter = 0;
+            
+            if (term === this.userInput) {
+                const name = recipe.name;
+                let ingredientsArr = [];
+                const recipeIngredients = recipe.ingredients;
+                recipeIngredients.forEach(ingredient => ingredientsArr.push(ingredient.ingredient));
+                const description = recipe.description;
+                ingredientsArr = ingredientsArr.toString();
+                let recipeElements = [];
+                recipeElements.push(name, ingredientsArr, description);
+                const recipeElementsStringified = JSON.stringify(recipeElements);
+                counter = this.countOccurencies(recipeElementsStringified, term);
+            }
+
+            if (term === this.keywordList) {
+                const fullRecipe = JSON.stringify(recipe);
+                term.forEach(termElement => {
+                    counter = this.countOccurencies(fullRecipe, termElement.keyword);
+                });
+            }
+
+            const recipeCounter = {
+                id: recipe.id,
+                counter: counter
+            };
+
+            resultsToBeSorted.push(recipeCounter);
+        });
+
+        const sortedRecipeCounters = this.sortCounters(resultsToBeSorted);
+        return sortedRecipeCounters;
+    }
+
+    // compte le nombre de fois que le terme apparaît dans une chaîne de caractère
+    countOccurencies(string, word) {
+        return string.split(word).length -1;
+    }
+
+    // tri en fonction du compteur
+    sortCounters(recipeCounters){
+        recipeCounters.sort(function (a, b) {
+            if (a.counter < b.counter)
+                return 1;
+            if (a.counter > b.counter )
+                return -1;
+            return 0;
+        });
+        return recipeCounters;
+    }
+
+    // récupère les recettes correspondant aux id des résultats triés
+    getRevelantRecipesFromSortedCounters(counters){
+        const relevantRecipes = [];
+        counters.forEach(counter => {
+            const relevantRecipe = recipes.find(recipe => recipe.id === counter.id);
+            relevantRecipes.push(relevantRecipe);
+        });
+        return relevantRecipes;
     }
 }
