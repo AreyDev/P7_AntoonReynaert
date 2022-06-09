@@ -3,7 +3,7 @@ import * as Utils from './utils.js';
 import CardSection from './cardSection.js';
 import Dropdown from './dropdown.js'
 import SearchBar from './searchBar.js';
-import TagList from './tagList.js';
+import TagList from './taglist.js';
 import Search from './search.js';
 
 const tagContainer = document.querySelector('.tag-container');
