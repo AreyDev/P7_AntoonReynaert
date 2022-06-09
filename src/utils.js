@@ -1,4 +1,4 @@
-import OptionList from './OptionList.js';
+import OptionList from './optionList.js';
 
 export function getIngredientsList(data) {
     let ingredientList = [];

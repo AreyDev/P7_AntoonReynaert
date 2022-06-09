@@ -72,6 +72,7 @@ export default class Search{
                 }
 
             });
+            console.timeEnd()
         }
         
         if (keywordList !== null) {
